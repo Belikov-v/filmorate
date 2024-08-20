@@ -2,40 +2,56 @@ package com.ruCode.filmorate.controller;
 
 
 import com.ruCode.filmorate.model.Film;
+import com.ruCode.filmorate.service.FilmService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
-    private static Long id = 1L;
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmService filmService;
 
     @GetMapping
     public List<Film> getFilms(){
-        return List.copyOf(films.values());
+        return filmService.getFilms();
     }
 
     @PostMapping
     public Film post(@RequestBody @Valid Film film){
-        log.debug("POST film");
-        film.setId(id++);
-        films.put(film.getId(),film);
-        return film;
+        return filmService.addFilm(film);
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable long id){
+        return filmService.getFilm(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable long id){
+        filmService.deleteFilm(id);
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody @Valid Film film){
-        log.debug("Put film");
-        films.put(film.getId(), film);
-        return film;
+        return filmService.updateFilm(film);
     }
 
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable long id, @PathVariable long userId){
+        filmService.addLike(id, userId);
+    }
 
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable long id, @PathVariable long userId){
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular?count={count}")
+    public List<Film> getPopularFilms(@RequestParam(required = false) Integer count){
+        return filmService.getPopular(count);
+    }
 }

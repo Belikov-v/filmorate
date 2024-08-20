@@ -7,7 +7,10 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -22,4 +25,13 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
+    private Set<Long> friends;
+
+    public void addFriend(long id){
+        friends.add(id);
+    }
+
+    public boolean deleteFriend(long id){
+        return friends.remove(id);
+    }
 }
